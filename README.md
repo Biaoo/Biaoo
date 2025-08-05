@@ -30,6 +30,8 @@
     <span style="font-weight: bold;">🚀 Currently working on:</span>
     <br>
     <a href="https://www.hiqlcd.com/" target="_blank"><b>HiQLCD</b></a> - Building a high-quality lifecycle database for China's industrial manufacturing sector.
+    <br>
+    <a href="https://tidas.tiangong.earth/" target="_blank"><b>TIDAS</b></a> - An open-source data system, providing unified, standardized, and extensible foundational support for Life Cycle Assessment (LCA) and carbon footprint management. 
   </p>
 
 ---
