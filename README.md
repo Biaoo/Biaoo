@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="./assets/typing.gif" alt="Typing Animation" />
+  <img src="./assets/typing.svg" alt="Hey, I'm Biaoo" />
 </div>
 
 ---

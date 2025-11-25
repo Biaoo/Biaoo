@@ -1,187 +1,168 @@
 #!/usr/bin/env python3
 """
 SVG to GIF Converter
-Captures SVG animation and converts it to GIF
+Creates a professional typing animation with blinking cursor
 """
 
-import time
 import os
 from PIL import Image, ImageDraw, ImageFont
-import requests
-from io import BytesIO
-
-def capture_svg_animation():
-    """Capture SVG animation and save as GIF"""
-    
-    # SVG URL
-    svg_url = "https://readme-typing-svg.herokuapp.com?font=Fira+Code&weight=600&size=26&pause=1500&color=6366F1&center=true&vCenter=true&width=600&lines=Hey%2C+I'm+Biaoo+%F0%9F%91%8B; Passionate+about+AI+%26+Sustainability"
-    
-    print("正在捕获SVG动画...")
-    
-    # 创建assets目录
-    if not os.path.exists('assets'):
-        os.makedirs('assets')
-    
-    # 创建打字机效果GIF
-    print("\n创建打字机效果GIF...")
-    create_typing_gif()
 
 
 def create_typing_gif():
-    """创建真正的打字机效果GIF"""
-    
-    # 创建assets目录
+    """Create professional typing animation GIF with blinking cursor"""
+
+    # Create assets directory
     if not os.path.exists('assets'):
         os.makedirs('assets')
-    
-    # 文本内容
+
+    # Text content (clean, professional, no emoji)
     text_lines = [
         "Hey, I'm Biaoo",
-        "Passionate about AI & Sustainability"
+        "AI Engineer | Sustainability Enthusiast"
     ]
-    
-    # 创建图片参数
-    width, height = 1000, 260  # 增加分辨率
-    background_color = (0, 0, 0, 0)  # 透明背景
-    text_color = '#6366F1'  # Indigo color
-    
-    # 尝试加载字体
-    font_size = 36  # 增加字体大小
+
+    # Image parameters
+    width, height = 600, 80
+    background_color = (255, 255, 255, 0)  # Transparent
+    text_color = (99, 102, 241)  # #6366F1 Indigo
+    cursor_color = (99, 102, 241)
+
+    # Load font
+    font_size = 28
     font = None
-    
-    # 尝试多个字体路径，优先使用Fira Code
+
     font_paths = [
-        "/System/Library/Fonts/Monaco.ttf",  # macOS等宽字体
-        "/System/Library/Fonts/SF-Mono-Regular.otf",  # macOS系统等宽字体
-        "/System/Library/Fonts/SF-Mono-Bold.otf",
-        "/System/Library/Fonts/Menlo.ttc",  # macOS等宽字体
-        "/Library/Fonts/FiraCode-Regular.ttf",  # 如果安装了Fira Code
-        "/Library/Fonts/FiraCode-Bold.ttf",
-        "/System/Library/Fonts/Arial.ttf",
+        "/System/Library/Fonts/SFNSMono.ttf",
+        "/System/Library/Fonts/Monaco.ttf",
+        "/System/Library/Fonts/Menlo.ttc",
+        "/Library/Fonts/SF-Mono-Regular.otf",
+        "/System/Library/Fonts/Supplemental/Menlo.ttc",
         "/System/Library/Fonts/Helvetica.ttc",
-        "/System/Library/Fonts/SF-Pro-Display-Regular.otf",
-        "/System/Library/Fonts/NewYork.ttf",
-        "/Library/Fonts/Arial.ttf",
-        "/Library/Fonts/Helvetica.ttc"
     ]
-    
+
     for font_path in font_paths:
         try:
             font = ImageFont.truetype(font_path, font_size)
-            print(f"✅ 使用字体: {font_path}")
+            print(f"Using font: {font_path}")
             break
-        except:
+        except Exception:
             continue
-    
+
     if font is None:
-        print("⚠️ 无法加载系统字体，使用默认字体")
+        print("Warning: Using default font")
         font = ImageFont.load_default()
-    
+
     images = []
-    
-    # 创建基础空白帧（只创建一次）
-    base_blank_frame = Image.new('RGBA', (width, height), color=background_color)
-    
-    # 第一行文字 - 打字机效果
-    current_text = ""
-    for char in text_lines[0]:
-        current_text += char
-        # 基于空白帧创建新图片，确保一致性
-        img = base_blank_frame.copy()
+    cursor_width = 2
+    cursor_height = 30
+
+    def create_frame(text, show_cursor=True):
+        """Create a single frame with optional cursor"""
+        img = Image.new('RGBA', (width, height), color=background_color)
         draw = ImageDraw.Draw(img)
-        
-        # 计算文字位置使其居中
-        bbox = draw.textbbox((0, 0), current_text, font=font)
+
+        # Calculate text position (centered)
+        bbox = draw.textbbox((0, 0), text, font=font)
         text_width = bbox[2] - bbox[0]
         text_height = bbox[3] - bbox[1]
         x = (width - text_width) // 2
         y = (height - text_height) // 2
-        
-        draw.text((x, y), current_text, fill=text_color, font=font)
-        images.append(img)
-    
-    # 添加第一行完成后的停顿帧
-    for _ in range(8):  # 增加停顿帧数，让第一行更容易看到
-        # 创建完整的最后一帧副本
-        last_frame = images[-1].copy()
-        images.append(last_frame)
-    
-    # 添加空白停顿帧（使用相同的空白帧对象）
-    for _ in range(3):  # 减少空白停顿帧
-        images.append(base_blank_frame.copy())
-    
-    # 第二行文字 - 打字机效果
-    current_text = ""
-    for char in text_lines[1]:
-        current_text += char
-        # 基于空白帧创建新图片，确保一致性
-        img = base_blank_frame.copy()
-        draw = ImageDraw.Draw(img)
-        
-        # 计算文字位置使其居中
-        bbox = draw.textbbox((0, 0), current_text, font=font)
-        text_width = bbox[2] - bbox[0]
-        text_height = bbox[3] - bbox[1]
-        x = (width - text_width) // 2
-        y = (height - text_height) // 2
-        
-        draw.text((x, y), current_text, fill=text_color, font=font)
-        images.append(img)
-    
-    # 添加最终停顿帧
-    for _ in range(30):  # 增加最终停顿帧，让第二行更容易看到
-        # 创建完整的最后一帧副本
-        last_frame = images[-1].copy()
-        images.append(last_frame)
-    
-    # 保存GIF
+
+        # Draw text
+        draw.text((x, y), text, fill=text_color, font=font)
+
+        # Draw cursor
+        if show_cursor and text:
+            cursor_x = x + text_width + 3
+            cursor_y = (height - cursor_height) // 2
+            draw.rectangle(
+                [cursor_x, cursor_y, cursor_x + cursor_width, cursor_y + cursor_height],
+                fill=cursor_color
+            )
+
+        return img
+
+    def add_typing_frames(text, frame_list):
+        """Add typing animation frames for a text"""
+        current_text = ""
+        for i, char in enumerate(text):
+            current_text += char
+            # Add frame with cursor
+            frame_list.append(create_frame(current_text, show_cursor=True))
+            # Add frame without cursor (blink effect every 3 chars)
+            if i % 3 == 0:
+                frame_list.append(create_frame(current_text, show_cursor=False))
+
+    def add_pause_frames(text, frame_list, count=10):
+        """Add pause frames with blinking cursor"""
+        for i in range(count):
+            show_cursor = i % 2 == 0  # Blink cursor
+            frame_list.append(create_frame(text, show_cursor=show_cursor))
+
+    def add_erase_frames(text, frame_list):
+        """Add erasing animation frames"""
+        for i in range(len(text), 0, -2):  # Erase 2 chars at a time (faster)
+            current_text = text[:i]
+            frame_list.append(create_frame(current_text, show_cursor=True))
+
+    # Line 1: Type, pause, erase
+    print(f"Creating frames for: {text_lines[0]}")
+    add_typing_frames(text_lines[0], images)
+    add_pause_frames(text_lines[0], images, count=16)  # Longer pause
+    add_erase_frames(text_lines[0], images)
+
+    # Small gap between lines
+    for _ in range(4):
+        images.append(create_frame("", show_cursor=True))
+        images.append(create_frame("", show_cursor=False))
+
+    # Line 2: Type, pause, erase
+    print(f"Creating frames for: {text_lines[1]}")
+    add_typing_frames(text_lines[1], images)
+    add_pause_frames(text_lines[1], images, count=20)  # Even longer pause for second line
+    add_erase_frames(text_lines[1], images)
+
+    # Final pause before loop
+    for _ in range(6):
+        images.append(create_frame("", show_cursor=True))
+        images.append(create_frame("", show_cursor=False))
+
+    # Save GIF
     if images:
-        print(f"准备保存 {len(images)} 帧到GIF...")
-        
-        # 确保所有图片都是RGBA模式
-        for i, img in enumerate(images):
-            if img.mode != 'RGBA':
-                images[i] = img.convert('RGBA')
-        
-        # 使用更直接的方法保存GIF
+        print(f"Saving {len(images)} frames to GIF...")
+
         try:
-            # 创建新的GIF
-            first_frame = images[0]
-            remaining_frames = images[1:]
-            
-            first_frame.save(
+            images[0].save(
                 'assets/typing.gif',
                 format='GIF',
                 save_all=True,
-                append_images=remaining_frames,
-                duration=150,
+                append_images=images[1:],
+                duration=80,  # 80ms per frame for smooth animation
                 loop=0,
-                optimize=True,  # 启用优化以减少文件大小
-                disposal=2,  # 保持disposal=2，清除上一帧
-                background=(0, 0, 0, 0)  # 设置透明背景
+                disposal=2,
+                transparency=0,
+                optimize=True
             )
-            print("✅ 打字机效果GIF已保存到 assets/typing.gif")
+            print("Saved: assets/typing.gif")
+            print(f"Total frames: {len(images)}")
         except Exception as e:
-            print(f"保存失败: {e}")
-            # 尝试最简单的保存方法
-            try:
-                images[0].save('assets/typing.gif', save_all=True, append_images=images[1:], duration=150, loop=0)
-                print("✅ 使用简单方法保存GIF成功")
-            except Exception as e2:
-                print(f"简单方法也失败: {e2}")
-        
-        print(f"📊 总共创建了 {len(images)} 帧")
+            print(f"Error saving GIF: {e}")
+            # Fallback method
+            images[0].save(
+                'assets/typing.gif',
+                save_all=True,
+                append_images=images[1:],
+                duration=80,
+                loop=0
+            )
+            print("Saved using fallback method")
     else:
-        print("❌ 无法创建GIF")
+        print("Error: No frames created")
+
 
 if __name__ == "__main__":
-    print("🚀 开始创建打字机效果GIF...")
+    print("Creating professional typing animation...")
     print("=" * 50)
-    
-    capture_svg_animation()
-
-    
-    print("\n" + "=" * 50)
-    print("✅ 转换完成！")
-    print("📁 文件保存在 assets/ 目录中")
-    print("📝 在README.md中使用: ![Typing Animation](./assets/typing.gif)") 
+    create_typing_gif()
+    print("=" * 50)
+    print("Done!")
