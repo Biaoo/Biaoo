@@ -35,7 +35,7 @@
   </p>
 
 ---
-
+<!-- 
 ## 🛠️ Skills & Technologies
 
 <h3>💻 Programming Languages</h3>
@@ -96,7 +96,7 @@
 <img src="https://img.shields.io/badge/GitHub_Actions-2088FF?style=for-the-badge&logo=github-actions&logoColor=white" style="max-height:24px; max-width:120px;" />
 </div>
 
----
+--- -->
 
 ## 📫 Let's Connect
 
