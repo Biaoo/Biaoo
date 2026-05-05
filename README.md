@@ -14,7 +14,7 @@
   <p>
     <span style="font-weight: bold;">🌍 Location:</span>
     <br>
-    Shanghai, China
+    Beijing, China
   </p>
   <p>
     <span style="font-weight: bold;">💼 Role:</span>
